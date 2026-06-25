@@ -1,0 +1,105 @@
+public class Main {
+
+    static int[] buildBadCharTable(String pattern) {
+
+        int[] badChar = new int[256];
+
+        for(int i = 0; i < 256; i++) {
+            badChar[i] = -1;
+        }
+
+        for(int i = 0; i < pattern.length(); i++) {
+            badChar[pattern.charAt(i)] = i;
+        }
+
+        return badChar;
+    }
+
+
+    static void boyerMoore(String text, String pattern) {
+
+        int[] badChar = buildBadCharTable(pattern);
+
+        int n = text.length();
+        int m = pattern.length();
+
+        int shift = 0;
+
+
+        while(shift <= n - m) {
+
+
+            int j = m - 1;
+
+
+            while(j >= 0 &&
+                    pattern.charAt(j) == text.charAt(shift + j)) {
+
+                j--;
+
+            }
+
+
+            if(j < 0) {
+
+                System.out.println(
+                        "Pattern found at index: " + shift
+                                + " --> ....sort");
+
+
+                if(shift + m < n)
+                    shift += m - badChar[text.charAt(shift+m)];
+
+                else
+                    shift += 1;
+
+            }
+
+
+            else {
+
+
+                char textChar = text.charAt(shift+j);
+                char patternChar = pattern.charAt(j);
+
+
+                int move = Math.max(1,
+                        j - badChar[textChar]);
+
+
+                System.out.println(
+                        "Mismatch at text["+(shift+j)+"] = '"
+                                + textChar +
+                                "' vs pattern[" + j + "] = '"
+                                + patternChar +
+                                "'  => shifting by " + move);
+
+
+                shift += move;
+
+            }
+
+        }
+
+    }
+
+
+
+    public static void main(String[] args) {
+
+
+        String text =
+                "Insertion sort typically has a smaller constant factor than merge sort";
+
+
+        String pattern = "sort";
+
+
+        System.out.println("Text:    \""+text+"\"");
+        System.out.println("Pattern: \""+pattern+"\"\n");
+
+
+        boyerMoore(text,pattern);
+
+    }
+}
